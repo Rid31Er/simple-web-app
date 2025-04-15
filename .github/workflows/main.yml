@@ -28,14 +28,15 @@ jobs:
         context: .
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/my-app:latest
-    - name: Setup SSH agent
-      uses: webfactory/ssh-agent@v0.5.3
+    
+    - name: Deploy to K3s using SSH
+      uses: appleboy/ssh-action@v0.0.9
       with:
-        ssh-private-key: ${{ secrets.K3S_SSH_KEY }}
-
-    - name: Deploy to K3s
-      run: |
-        kubectl set image deployment/my-app my-app=${{ secrets.DOCKER_USERNAME }}/my-app:latest
-        kubectl rollout restart deployment/my-app
-
+        host: ${{ secrets.K3S_HOST }}
+        username: root
+        key: ${{ secrets.K3S_SSH_KEY }}
+        script: |
+          export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+          kubectl set image deployment/my-app my-app=${{ secrets.DOCKER_USERNAME }}/my-app:latest --namespace=default
+          kubectl rollout status deployment/my-app --namespace=default
 
