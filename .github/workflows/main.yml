@@ -28,6 +28,12 @@ jobs:
         context: .
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/my-app:latest
+    - name: Add SSH key to agent
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.K3S_SSH_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-agent bash -c 'ssh-add ~/.ssh/id_rsa; git ls-remote'
 
     - name: Deploy to K3s using SSH
       uses: appleboy/ssh-action@v0.0.9
