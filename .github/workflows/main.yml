@@ -23,7 +23,7 @@ jobs:
       with:
         context: .
         push: true
-        tags: <dockerhub_username>/simple-web-app:latest
+        tags: ridhwan31/simple-web-app:latest
 
     - name: Trigger Rancher Redeploy
       run: |
