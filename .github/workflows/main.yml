@@ -37,14 +37,15 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -H ${{ secrets.K3S_HOST }} >> ~/.ssh/known_hosts
 
-    # Deploy ke K3s menggunakan SSH
+
+    # Deploy ke K3s menggunakan kubectl
     - name: Deploy to K3s
       run: |
-        ssh -o StrictHostKeyChecking=no root@${{ secrets.K3S_HOST }} << 'EOF'
-          # Tarik Docker image terbaru di node K3s
-          docker pull ${{ secrets.DOCKER_USERNAME }}/my-app:latest
-          
-          # Deploy ke Kubernetes menggunakan kubectl (pastikan kubectl sudah terinstall dan dikonfigurasi di node)
-          kubectl set image deployment/my-app my-app=${{ secrets.DOCKER_USERNAME }}/my-app:latest
-          kubectl rollout restart deployment/my-app
-        EOF
+        kubectl apply -f k8s/deployment.yaml
+        kubectl apply -f k8s/service.yaml
+
+    # Verifikasi Deployment dan Service
+    - name: Verify Deployment and Service
+      run: |
+        kubectl get deployments
+        kubectl get svc
