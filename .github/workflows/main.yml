@@ -34,7 +34,12 @@ jobs:
         ssh-private-key: ${{ secrets.K3S_SSH_KEY }}
 
     - name: Set SSH key permissions
-      run: chmod 600 ~/.ssh/id_rsa
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.K3S_SSH_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        # Verify the key is loaded
+        ls -l ~/.ssh/
     
     - name: Deploy to K3s using SSH
       uses: appleboy/ssh-action@v0.0.9
