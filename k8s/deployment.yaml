@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: my-app
-        image: my-docker-image:latest  # Ganti dengan nama image Docker kamu
+        image: ${{ secrets.DOCKER_USERNAME }}/my-app:latest  # Ganti dengan nama image Docker kamu
         ports:
         - containerPort: 5000
