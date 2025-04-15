@@ -28,26 +28,14 @@ jobs:
         context: .
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/my-app:latest
-    - name: Set up SSH key
+    - name: Setup SSH agent
       uses: webfactory/ssh-agent@v0.5.3
       with:
         ssh-private-key: ${{ secrets.K3S_SSH_KEY }}
 
-    - name: Set SSH key permissions
+    - name: Deploy to K3s
       run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.K3S_SSH_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        # Verify the key is loaded
-        ls -l ~/.ssh/
-    
-    - name: Deploy to K3s using SSH
-      uses: appleboy/ssh-action@v0.0.9
-      with:
-        host: ${{ secrets.K3S_HOST }}
-        username: root
-        key: ${{ secrets.K3S_SSH_KEY }}
-        script: |
-          kubectl set image deployment/my-app my-app=${{ secrets.DOCKER_USERNAME }}/my-app:latest
-          kubectl rollout restart deployment/my-app
+        kubectl set image deployment/my-app my-app=${{ secrets.DOCKER_USERNAME }}/my-app:latest
+        kubectl rollout restart deployment/my-app
+
 
