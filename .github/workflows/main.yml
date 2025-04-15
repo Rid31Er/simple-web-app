@@ -1,42 +1,50 @@
-name: CI/CD Pipeline to K3s
+name: Build, Push Docker Image, and Deploy to K3s
 
 on:
   push:
     branches:
-      - main
-  pull_request:
-    branches:
-      - main
+      - main  # Ganti dengan nama branch yang diinginkan
 
 jobs:
-  build:
+  build_and_deploy:
     runs-on: ubuntu-latest
 
     steps:
+    # Checkout repository
     - name: Checkout code
       uses: actions/checkout@v3
 
+    # Login ke DockerHub
     - name: Login to DockerHub
       uses: docker/login-action@v2
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
+    # Build dan Push Docker Image
     - name: Build and Push Docker Image
       uses: docker/build-push-action@v2
       with:
         context: .
         push: true
         tags: ${{ secrets.DOCKER_USERNAME }}/my-app:latest
-    
-    - name: Deploy to K3s using SSH
-      uses: appleboy/ssh-action@v0.0.9
-      with:
-        host: ${{ secrets.K3S_HOST }}
-        username: root
-        key: ${{ secrets.K3S_SSH_KEY }}
-        script: |
-          export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
-          kubectl set image deployment/my-app my-app=${{ secrets.DOCKER_USERNAME }}/my-app:latest --namespace=default
-          kubectl rollout status deployment/my-app --namespace=default
 
+    # Setup SSH untuk koneksi ke server K3s
+    - name: Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.K3S_SSH_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.K3S_HOST }} >> ~/.ssh/known_hosts
+
+    # Deploy ke K3s menggunakan SSH
+    - name: Deploy to K3s
+      run: |
+        ssh -o StrictHostKeyChecking=no root@${{ secrets.K3S_HOST }} << 'EOF'
+          # Tarik Docker image terbaru di node K3s
+          docker pull ${{ secrets.DOCKER_USERNAME }}/my-app:latest
+          
+          # Deploy ke Kubernetes menggunakan kubectl (pastikan kubectl sudah terinstall dan dikonfigurasi di node)
+          kubectl set image deployment/my-app my-app=${{ secrets.DOCKER_USERNAME }}/my-app:latest
+          kubectl rollout restart deployment/my-app
+        EOF
