@@ -17,3 +17,7 @@ spec:
           image: docker.io/ridhwan31/my-flask-app:latest
           ports:
             - containerPort: 5000
+          resources:
+            limits:
+              cpu: "512m"    # Limit CPU 512 millicpu (0.512 CPU)
+              memory: "512Mi" # Limit memory 512 Mi (512MB)
