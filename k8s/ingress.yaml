@@ -3,21 +3,21 @@ kind: Ingress
 metadata:
   name: flask-ingress
   annotations:
-    traefik.ingress.kubernetes.io/router.entrypoints: web, websecure  # Mendengarkan pada HTTP dan HTTPS
-    cert-manager.io/cluster-issuer: letsencrypt-prod  # Menunjukkan Issuer yang telah kita buat
+    traefik.ingress.kubernetes.io/router.entrypoints: web, websecure
+    cert-manager.io/cluster-issuer: letsencrypt-prod  # Menunjukkan Issuer yang sudah dibuat
 spec:
   rules:
-  - host: "test.ridhwanerlangga.my.id"  # Ganti dengan domain atau subdomain yang kamu inginkan
+  - host: "test.ridhwanerlangga.my.id"  # Ganti dengan domain kamu
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: flask-service  # Nama service yang terdaftar
+            name: flask-service
             port:
               number: 80
   tls:
   - hosts:
-    - "ridhwanerlangga.my.id"  # Ganti dengan domain kamu
-    secretName: myflaskapp-tls  # Sertifikat yang akan disimpan di secret
+    - "test.ridhwanerlangga.my.id"
+    secretName: test-ridhwanerlangga-my-id-tls  # Sertifikat yang akan disimpan di secret
