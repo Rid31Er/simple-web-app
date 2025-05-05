@@ -1,11 +1,11 @@
 apiVersion: cert-manager.io/v1
-kind: Issuer
+kind: ClusterIssuer
 metadata:
   name: letsencrypt-prod
 spec:
   acme:
-    email: erlanggaridhwan@gmail.com  # Ganti dengan email kamu
-    server: https://acme-v02.api.letsencrypt.org/directory  # Let's Encrypt production server
+    email: erlanggaridhwan@gmail.com
+    server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-prod-key
     solvers:
