@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: flask
-          image: ghcr.io/YOUR_USERNAME/YOUR_REPO:latest
+          image: docker.io/YOUR_DOCKERHUB_USERNAME/my-flask-app:latest
           ports:
             - containerPort: 5000
