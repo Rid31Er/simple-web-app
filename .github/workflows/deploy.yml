@@ -1,0 +1,31 @@
+name: Deploy to K3s via Docker Hub
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Build and push image
+        run: |
+          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/my-flask-app:latest .
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/my-flask-app:latest
+
+      - name: Setup kubeconfig
+        run: |
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > kubeconfig.yaml
+          export KUBECONFIG=$PWD/kubeconfig.yaml
+
+      - name: Deploy to Kubernetes
+        run: |
+          export KUBECONFIG=$PWD/kubeconfig.yaml
+          kubectl apply -f k8s/
