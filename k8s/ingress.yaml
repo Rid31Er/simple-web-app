@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: flask-ingress
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web, websecure  # Memastikan Traefik mendengarkan di HTTP/HTTPS
+spec:
+  rules:
+  - host: "test.ridhwanerlangga.my.id"  # Ganti dengan domain atau subdomain yang kamu inginkan
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: flask-service  # Nama service yang terdaftar
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - "ridhwanerlangga.my.id"  # Ganti dengan domain kamu
+    secretName: myflaskapp-tls  # Akan terbuat jika kamu menggunakan Cert-Manager untuk HTTPS
