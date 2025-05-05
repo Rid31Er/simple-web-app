@@ -1,0 +1,14 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencrypt-prod
+spec:
+  acme:
+    email: erlanggaridhwan@gmail.com  # Ganti dengan email kamu
+    server: https://acme-v02.api.letsencrypt.org/directory  # Let's Encrypt production server
+    privateKeySecretRef:
+      name: letsencrypt-prod-key
+    solvers:
+    - http01:
+        ingress:
+          class: traefik
