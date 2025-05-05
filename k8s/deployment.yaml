@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: flask-app
 spec:
-  replicas: 3
+  replicas: 1
   selector:
     matchLabels:
       app: flask
@@ -19,5 +19,5 @@ spec:
             - containerPort: 5000
           resources:
             limits:
-              cpu: "512m"    # Limit CPU 512 millicpu (0.512 CPU)
-              memory: "512Mi" # Limit memory 512 Mi (512MB)
+              cpu: "100m"    # Limit CPU 512 millicpu (0.512 CPU)
+              memory: "100Mi" # Limit memory 512 Mi (512MB)
